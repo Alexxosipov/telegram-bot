@@ -1,0 +1,21 @@
+{
+    "name": "alexxosipov/telegram",
+    "description": "Laravel package for easy telegram bot development",
+    "type": "library",
+    "require": {
+        "laravel/framework": "^11"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Alexxosipov\\Telegram\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alexander Osipov",
+            "email": "alexxosipov@yandex.ru"
+        }
+    ],
+    "minimum-stability": "stable"
+}
