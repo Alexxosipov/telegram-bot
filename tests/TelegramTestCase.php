@@ -1,34 +1,41 @@
 <?php
 
-namespace Alexxosipov\Telegram\Testing;
+namespace Tests;
 
 use Alexxosipov\Telegram\Models\TelegramUser;
 use Alexxosipov\Telegram\TelegramBot;
+use Orchestra\Testbench\TestCase;
 use Telegram\Bot\Objects\Update;
 
-class TelegramMock
+class TelegramTestCase extends TestCase
 {
-    public static function sendTextMessage(TelegramUser $telegramUser, string $text): void
+    public function sendTextMessage(
+        int     $userId,
+        string  $text,
+        ?string $firstName = null,
+        ?string $lastName = null,
+        ?string $username = null,
+    ): void
     {
-        $bot = TelegramMock::getBot();
+        $bot = TelegramTestCase::getBot();
 
         $update = new Update([
             'update_id' => rand(1000, 1000000),
             'message' => [
                 'message_id' => rand(1, 100),
                 'from' => [
-                    'id' => $telegramUser->id,
+                    'id' => $userId,
                     'is_bot' => false,
-                    'first_name' => $telegramUser->first_name,
-                    'last_name' => $telegramUser->last_name,
-                    'username' => $telegramUser->username,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'username' => $username,
                     'language_code' => 'en',
                 ],
                 'chat' => [
-                    'id' => $telegramUser->id,
-                    'first_name' => $telegramUser->first_name,
-                    'last_name' => $telegramUser->last_name,
-                    'username' => $telegramUser->username,
+                    'id' => $userId,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'username' => $username,
                     'type' => 'private',
                 ],
                 'date' => now()->timestamp,
@@ -39,9 +46,16 @@ class TelegramMock
         $bot->handle($update);
     }
 
-    public static function sendCallbackQuery(TelegramUser $telegramUser, \BackedEnum $action, array $data = []): void
+    public function sendCallbackQuery(
+        int         $userId,
+        \BackedEnum $action,
+        array       $data = [],
+        ?string     $firstName = null,
+        ?string     $lastName = null,
+        ?string     $username = null,
+    ): void
     {
-        $bot = TelegramMock::getBot();
+        $bot = TelegramTestCase::getBot();
 
         $data['action'] = $action->value;
 
@@ -50,11 +64,11 @@ class TelegramMock
             'callback_query' => [
                 'id' => rand(10000, 1000000),
                 'from' => [
-                    'id' => $telegramUser->id,
+                    'id' => $userId,
                     'is_bot' => false,
-                    'first_name' => $telegramUser->first_name,
-                    'last_name' => $telegramUser->last_name,
-                    'username' => $telegramUser->username,
+                    'first_name' => $firstName,
+                    'last_name' => $lastName,
+                    'username' => $username,
                     'language_code' => 'en',
                 ],
 
@@ -62,9 +76,9 @@ class TelegramMock
                     'message_id' => rand(1, 100),
                     'chat' => [
                         'id' => rand(10000, 1000000),
-                        'first_name' => $telegramUser->first_name,
-                        'last_name' => $telegramUser->last_name,
-                        'username' => $telegramUser->username,
+                        'first_name' => $firstName,
+                        'last_name' => $lastName,
+                        'username' => $username,
                         'type' => 'private',
                     ],
                     'date' => now()->timestamp,
