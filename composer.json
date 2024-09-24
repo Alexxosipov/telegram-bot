@@ -3,7 +3,8 @@
     "description": "Laravel package for easy telegram bot development",
     "type": "library",
     "require": {
-        "laravel/framework": "^11"
+        "laravel/framework": "^11",
+        "irazasyed/telegram-bot-sdk": "^3.14"
     },
     "license": "MIT",
     "autoload": {
@@ -17,5 +18,8 @@
             "email": "alexxosipov@yandex.ru"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "require-dev": {
+        "orchestra/testbench": "*"
+    }
 }
