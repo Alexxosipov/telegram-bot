@@ -13,11 +13,15 @@ class SetWebhook extends Command
 
     public function handle(ResponseSenderContract $senderContract): int
     {
+        $url = config('app.url') . config('telegram-bot.webhook-endpoint');
+
         $senderContract->setWebhook([
             'url' => config('app.url') . config('telegram-bot.webhook-endpoint'),
             'secret_token' => config('telegram-bot.secret'),
             'drop_pending_updates' => true,
         ]);
+
+        $this->info("Webhook set to $url");
 
         return 0;
     }

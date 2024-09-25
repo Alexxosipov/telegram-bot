@@ -31,8 +31,5 @@ class TelegramBotServiceProvider extends ServiceProvider
                 SetWebhook::class
             ]);
         }
-
-        $this->mergeConfigFrom(__DIR__ . '/../config/telegram-bot.php', 'telegram-bot');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 }
