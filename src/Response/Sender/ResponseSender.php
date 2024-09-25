@@ -4,11 +4,18 @@ namespace Alexxosipov\TelegramBot\Response\Sender;
 
 use Alexxosipov\TelegramBot\Models\TelegramUser;
 use Alexxosipov\TelegramBot\Response\Response;
+use Telegram\Bot\Api;
 use Telegram\Bot\Exceptions\TelegramResponseException;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 class ResponseSender implements ResponseSenderContract
 {
+    private Api $telegram;
+
+    public function __construct() {
+        $this->telegram = new Api(config('telegram-bot.bot-token'));
+    }
+
     public function send(TelegramUser $telegramUser, ?Response $response): void
     {
         if (is_null($response)) {
@@ -28,7 +35,7 @@ class ResponseSender implements ResponseSenderContract
         }
 
         if ( ! $telegramUser->message_id) {
-            $message = Telegram::sendMessage($message);
+            $message = $this->telegram->sendMessage($message);
             $telegramUser->update(['message_id' => $message->messageId]);
 
             return;
@@ -39,14 +46,14 @@ class ResponseSender implements ResponseSenderContract
         ]);
 
         try {
-            Telegram::editMessageText($data);
+            $this->telegram->editMessageText($data);
         } catch (TelegramResponseException $e) {
             // the only way to determine error when message is not modified
             if ($e->getMessage() === 'Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message') {
                 return;
             }
 
-            $message = Telegram::sendMessage($message);
+            $message = $this->telegram->sendMessage($message);
             $telegramUser->update(['message_id' => $message->messageId]);
             report($e);
         }
@@ -59,7 +66,7 @@ class ResponseSender implements ResponseSenderContract
         }
 
         try {
-            Telegram::deleteMessage([
+            $this->telegram->deleteMessage([
                 'chat_id' => $telegramUser->id,
                 'message_id' => $messageId,
             ]);
@@ -69,16 +76,16 @@ class ResponseSender implements ResponseSenderContract
 
     public function answerCallbackQuery(array $data): void
     {
-        Telegram::answerCallbackQuery($data);
+        $this->telegram->answerCallbackQuery($data);
     }
 
     public function sendRaw(array $data): void
     {
-        Telegram::sendMessage($data);
+        $this->telegram->sendMessage($data);
     }
 
     public function setWebhook(array $data): void
     {
-        Telegram::setWebhook($data);
+        $this->telegram->setWebhook($data);
     }
 }
