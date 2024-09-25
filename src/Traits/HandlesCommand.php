@@ -1,21 +1,17 @@
 <?php
 
-namespace Alexxosipov\Telegram\Traits;
+namespace Alexxosipov\TelegramBot\Traits;
 
-use Illuminate\Support\Facades\Log;
+use Alexxosipov\TelegramBot\Response\Response;
 use Telegram\Bot\Objects\Update;
 
 trait HandlesCommand
 {
-    private function handleCommand(Update $update): void
+    private function handleCommand(Update $update): ?Response
     {
         $parsedCommand = explode(' ', $update->message->text);
         $command = $parsedCommand[0];
         $params = $parsedCommand[1] ?? null;
-        $debug = compact('command', 'params');
-        $debug['rawCommand'] = $update->message->text;
-
-        Log::debug('Command', $debug);
 
         $commandHandler = $this->commandHandlerFactory->create(
             $command,
@@ -24,8 +20,6 @@ trait HandlesCommand
             $params
         );
 
-        if ($commandHandler) {
-            $this->sendResponse($commandHandler->handle());
-        }
+        return $commandHandler?->handle();
     }
 }

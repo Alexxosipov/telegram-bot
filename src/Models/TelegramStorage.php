@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Alexxosipov\Telegram\Models;
+namespace Alexxosipov\TelegramBot\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

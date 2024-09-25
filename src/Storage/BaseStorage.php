@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Alexxosipov\Telegram\Storage;
+namespace Alexxosipov\TelegramBot\Storage;
 
-use Alexxosipov\Telegram\Models\TelegramUser;
+use Alexxosipov\TelegramBot\Models\TelegramUser;
 
-abstract readonly class BaseStorage
+abstract readonly class BaseStorage implements StorageContract
 {
     public function __construct(
         protected TelegramUser $user,

@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Alexxosipov\Telegram\Commands;
+namespace Alexxosipov\TelegramBot\Commands;
 
-use Alexxosipov\Telegram\Models\TelegramUser;
-use Alexxosipov\Telegram\Response\Response;
-use Alexxosipov\Telegram\Storage\BaseStorage;
-use Alexxosipov\Telegram\TelegramBot;
-use Alexxosipov\Telegram\Traits\InteractsWithTelegramUser;
+use Alexxosipov\TelegramBot\Models\TelegramUser;
+use Alexxosipov\TelegramBot\Response\Response;
+use Alexxosipov\TelegramBot\Storage\StorageContract;
+use Alexxosipov\TelegramBot\TelegramBot;
+use Alexxosipov\TelegramBot\Traits\InteractsWithTelegramUser;
 
 abstract class CommandHandler
 {
     use InteractsWithTelegramUser;
 
     public function __construct(
-        protected TelegramUser   $telegramUser,
-        protected TelegramBot $telegramBot,
-        protected BaseStorage    $storage,
-        protected ?string        $params = null
+        protected TelegramUser $telegramUser,
+        protected TelegramBot  $telegramBot,
+        protected StorageContract  $storage,
+        protected ?string      $params = null
     ) {}
 
     abstract public function handle(): ?Response;

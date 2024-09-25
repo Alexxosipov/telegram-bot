@@ -1,14 +1,23 @@
 <?php
 
-namespace Alexxosipov\Telegram;
+namespace Alexxosipov\TelegramBot;
 
+use Alexxosipov\TelegramBot\Artisan\SetWebhook;
+use Alexxosipov\TelegramBot\Response\Sender\ResponseSender;
+use Alexxosipov\TelegramBot\Response\Sender\ResponseSenderContract;
+use Alexxosipov\TelegramBot\Storage\DatabaseStorage;
+use Alexxosipov\TelegramBot\Storage\StorageContract;
 use Illuminate\Support\ServiceProvider;
 
-class TelegramServiceProvider extends ServiceProvider
+class TelegramBotServiceProvider extends ServiceProvider
 {
+    public $bindings = [
+        ResponseSenderContract::class => ResponseSender::class,
+        StorageContract::class => DatabaseStorage::class
+    ];
+
     public function register()
     {
-
     }
 
     public function boot()
@@ -20,6 +29,10 @@ class TelegramServiceProvider extends ServiceProvider
 
             $this->publishesMigrations([
                 __DIR__.'/../database/migrations' => database_path('migrations'),
+            ]);
+
+            $this->commands([
+                SetWebhook::class
             ]);
         }
 

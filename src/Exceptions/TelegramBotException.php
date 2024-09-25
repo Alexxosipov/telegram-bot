@@ -1,6 +1,6 @@
 <?php
 
-namespace Alexxosipov\Telegram\Exceptions;
+namespace Alexxosipov\TelegramBot\Exceptions;
 
 class TelegramBotException extends \RuntimeException
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Alexxosipov\Telegram\Keyboards;
+namespace Alexxosipov\TelegramBot\Keyboards;
 
-use Alexxosipov\Telegram\Models\TelegramUser;
-use Alexxosipov\Telegram\Response\Keyboard as ResponseKeyboard;
+use Alexxosipov\TelegramBot\Models\TelegramUser;
+use Alexxosipov\TelegramBot\Response\Keyboard;
 
-abstract class Keyboard
+abstract class BaseKeyboard
 {
     public function __construct(
         protected TelegramUser $telegramUser

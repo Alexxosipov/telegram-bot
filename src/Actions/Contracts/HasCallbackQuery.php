@@ -1,10 +1,11 @@
 <?php
 
-namespace Alexxosipov\Telegram\Actions\Contracts;
+namespace Alexxosipov\TelegramBotBot\Actions\Contracts;
 
-use Alexxosipov\Telegram\Response\Response;
+use Alexxosipov\TelegramBot\Example\Enums\Action;
+use Alexxosipov\TelegramBot\Response\Response;
 
 interface HasCallbackQuery
 {
-    public function handleCallbackQuery(array $data): ?Response;
+    public function handleCallbackQuery(Action $action, array $data): ?Response;
 }

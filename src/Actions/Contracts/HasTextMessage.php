@@ -1,8 +1,8 @@
 <?php
 
-namespace Alexxosipov\Telegram\Actions\Contracts;
+namespace Alexxosipov\TelegramBot\Actions\Contracts;
 
-use Alexxosipov\Telegram\Response\Response;
+use Alexxosipov\TelegramBot\Response\Response;
 
 interface HasTextMessage
 {
