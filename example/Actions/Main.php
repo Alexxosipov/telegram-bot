@@ -16,7 +16,7 @@ class Main extends ActionHandler
             text: "Hey {$this->telegramUser->first_name}, welcome to the bot!",
             keyboard: new Keyboard([
                 [new KeyboardButton('Read the docs', Action::Docs)],
-                [new KeyboardButton('Join the group', Action::Docs)],
+                [new KeyboardButton('Join the group', Action::Group)],
                 [new KeyboardButton('Order bot development', Action::OrderBot)],
             ])
         );
