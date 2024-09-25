@@ -50,5 +50,12 @@
             "@php vendor/bin/phpstan analyse --verbose --ansi"
         ]
     },
-    "version": "0.0.2"
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Alexxosipov\\TelegramBot\\TelegramBotServiceProvider"
+            ]
+        }
+    },
+    "version": "0.0.3"
 }
