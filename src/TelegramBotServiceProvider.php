@@ -16,11 +16,7 @@ class TelegramBotServiceProvider extends ServiceProvider
         StorageContract::class => DatabaseStorage::class
     ];
 
-    public function register()
-    {
-    }
-
-    public function boot()
+    public function register(): void
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([

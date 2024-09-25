@@ -1,6 +1,6 @@
 <?php
 
-namespace Alexxosipov\TelegramBotBot\Actions\Contracts;
+namespace Alexxosipov\TelegramBot\Actions\Contracts;
 
 use Alexxosipov\TelegramBot\Example\Enums\Action;
 use Alexxosipov\TelegramBot\Response\Response;
