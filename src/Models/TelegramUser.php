@@ -1,18 +1,17 @@
 <?php
 
-namespace Alexxosipov\Telegram\Models;
+namespace Alexxosipov\TelegramBot\Models;
 
 use BackedEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
  * @property ?int $message_id
  * @property ?BackedEnum $action
  */
-class TelegramUser extends Model implements TelegramUserContract
+class TelegramUser extends Model
 {
     use HasFactory;
 

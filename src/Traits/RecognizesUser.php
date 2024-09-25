@@ -1,8 +1,8 @@
 <?php
 
-namespace Alexxosipov\Telegram\Traits;
+namespace Alexxosipov\TelegramBot\Traits;
 
-use Alexxosipov\Telegram\Models\TelegramUser;
+use Alexxosipov\TelegramBot\Models\TelegramUser;
 use Telegram\Bot\Objects\Update;
 
 trait RecognizesUser

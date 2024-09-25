@@ -2,98 +2,38 @@
 
 namespace Tests;
 
-use Alexxosipov\Telegram\Models\TelegramUser;
-use Alexxosipov\Telegram\TelegramBot;
+use Alexxosipov\TelegramBot\Models\TelegramUser;
+use Alexxosipov\TelegramBot\TelegramBotServiceProvider;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Orchestra\Testbench\TestCase;
-use Telegram\Bot\Objects\Update;
+use Tests\Traits\FakeTelegramApi;
+use Tests\Traits\HasResponseAsserts;
 
-class TelegramTestCase extends TestCase
+abstract class TelegramTestCase extends TestCase
 {
-    public function sendTextMessage(
-        int     $userId,
-        string  $text,
-        ?string $firstName = null,
-        ?string $lastName = null,
-        ?string $username = null,
-    ): void
+    use RefreshDatabase;
+    use WithFaker;
+    use HasResponseAsserts;
+    use FakeTelegramApi;
+
+    protected function getPackageProviders($app): array
     {
-        $bot = TelegramTestCase::getBot();
-
-        $update = new Update([
-            'update_id' => rand(1000, 1000000),
-            'message' => [
-                'message_id' => rand(1, 100),
-                'from' => [
-                    'id' => $userId,
-                    'is_bot' => false,
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
-                    'username' => $username,
-                    'language_code' => 'en',
-                ],
-                'chat' => [
-                    'id' => $userId,
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
-                    'username' => $username,
-                    'type' => 'private',
-                ],
-                'date' => now()->timestamp,
-                'text' => $text,
-            ],
-        ]);
-
-        $bot->handle($update);
+        return [
+            TelegramBotServiceProvider::class
+        ];
     }
 
-    public function sendCallbackQuery(
-        int         $userId,
-        \BackedEnum $action,
-        array       $data = [],
-        ?string     $firstName = null,
-        ?string     $lastName = null,
-        ?string     $username = null,
-    ): void
+    protected function createTelegramUser(
+        ?\BackedEnum $action = null,
+    )
     {
-        $bot = TelegramTestCase::getBot();
-
-        $data['action'] = $action->value;
-
-        $update = new Update([
-            'update_id' => rand(10000, 10000000),
-            'callback_query' => [
-                'id' => rand(10000, 1000000),
-                'from' => [
-                    'id' => $userId,
-                    'is_bot' => false,
-                    'first_name' => $firstName,
-                    'last_name' => $lastName,
-                    'username' => $username,
-                    'language_code' => 'en',
-                ],
-
-                'message' => [
-                    'message_id' => rand(1, 100),
-                    'chat' => [
-                        'id' => rand(10000, 1000000),
-                        'first_name' => $firstName,
-                        'last_name' => $lastName,
-                        'username' => $username,
-                        'type' => 'private',
-                    ],
-                    'date' => now()->timestamp,
-                    'text' => 'some text.',
-                ],
-                'chat_instance' => '1234567890abcdef',
-                'data' => json_encode($data),
-            ],
+        return TelegramUser::create([
+            'id' => rand(100000,100000000),
+            'action' => $action->value ?? config('telegram-bot.default-action'),
+            'first_name' => $this->faker->firstName,
+            'last_name' => $this->faker->lastName,
+            'username' => $this->faker->userName,
         ]);
-
-        $bot->handle($update);
-    }
-
-    private static function getBot(): TelegramBot
-    {
-        return app(TelegramBot::class);
     }
 }

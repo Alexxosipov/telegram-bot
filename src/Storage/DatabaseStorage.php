@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Alexxosipov\Telegram\Storage;
+namespace Alexxosipov\TelegramBot\Storage;
 
-use Alexxosipov\Telegram\Models\TelegramStorage;
+use Alexxosipov\TelegramBot\Models\TelegramStorage;
 
 readonly class DatabaseStorage extends BaseStorage
 {

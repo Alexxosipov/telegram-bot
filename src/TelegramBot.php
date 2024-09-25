@@ -1,25 +1,25 @@
 <?php
 
-namespace Alexxosipov\Telegram;
+namespace Alexxosipov\TelegramBot;
 
-use Alexxosipov\Telegram\Actions\ActionHandlerFactory;
-use Alexxosipov\Telegram\Actions\Contracts\HasCallbackQuery;
-use Alexxosipov\Telegram\Actions\Contracts\HasTextMessage;
-use Alexxosipov\Telegram\Commands\CommandHandlerFactory;
-use Alexxosipov\Telegram\Exceptions\TelegramBotException;
-use Alexxosipov\Telegram\Models\TelegramUser;
-use Alexxosipov\Telegram\Traits\DeletesMessage;
-use Alexxosipov\Telegram\Traits\HandlesCommand;
-use Alexxosipov\Telegram\Traits\RecognizesUser;
-use Alexxosipov\Telegram\Traits\SendsResponse;
+use Alexxosipov\TelegramBot\Actions\ActionHandlerFactory;
+use Alexxosipov\TelegramBot\Actions\Contracts\HasCallbackQuery;
+use Alexxosipov\TelegramBot\Actions\Contracts\HasTextMessage;
+use Alexxosipov\TelegramBot\Commands\CommandHandlerFactory;
+use Alexxosipov\TelegramBot\Exceptions\TelegramBotException;
+use Alexxosipov\TelegramBot\Models\TelegramUser;
+use Alexxosipov\TelegramBot\Response\Response;
+use Alexxosipov\TelegramBot\Response\Sender\ResponseSenderContract;
+use Alexxosipov\TelegramBot\Traits\HandlesCommand;
+use Alexxosipov\TelegramBot\Traits\RecognizesUser;
 use BackedEnum;
+use Illuminate\Http\Request;
+use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\Objects\Update;
 
 class TelegramBot
 {
-    use SendsResponse;
-    use DeletesMessage;
     use RecognizesUser;
     use HandlesCommand;
 
@@ -29,64 +29,71 @@ class TelegramBot
     public function __construct(
         public readonly ActionHandlerFactory   $actionHandlerFactory,
         private readonly CommandHandlerFactory $commandHandlerFactory,
+        private readonly ResponseSenderContract $responseSender
     )
     {
     }
 
-    public function handle(Update $update): void
+    public function handleFromRequest(Request $request): void
+    {
+        /** @var TelegramBot $bot */
+        $bot = app(static::class);
+        $bot->handle(
+            Telegram::getWebhookUpdate(request: (new PsrHttpFactory)->createRequest($request))
+        );
+    }
+
+    public function handle(Update $update): ?Response
     {
         $user = $this->getUserFromUpdate($update);
 
         if (!$user) {
-            return;
+            return null;
         }
 
         $this->telegramUser = $user;
-        $currentAction = $user->action;
 
         try {
-            if ($update->message) {
-                $this->handleMessage($update);
+            $response = null;
 
-                return;
+            if ($update->message) {
+                $response = $this->handleMessage($update);
             }
 
             if ($update->callbackQuery) {
-                $this->handleCallbackQuery($update);
-
-                return;
+                $response = $this->handleCallbackQuery($update);
             }
+
+            $this->responseSender->send($this->telegramUser, $response);
+
+            return $response;
         } catch (\Throwable $e) {
-            if ($this->telegramUser->action !== $currentAction) {
-                // todo
-            }
-
+            dd($e);
             report($e);
+
+            return null;
         }
     }
 
     public function handlePublicMessage(Update $update): void
     {
-
     }
 
-    private function handleMessage(Update $update): void
+    private function handleMessage(Update $update): ?Response
     {
         if ($update->message->chat->type !== 'private') {
             $this->handlePublicMessage($update);
 
-            return;
+            return null;
         }
 
-        $this->deleteMessage($update->message->messageId);
+        $this->responseSender->deleteMessage($this->telegramUser, $update->message->messageId);
 
         if ($update->message->hasCommand()) {
-            $this->handleCommand($update);
-
-            return;
+            return $this->handleCommand($update);
         }
 
-        $actionHandler = ActionHandlerFactory::make($this->telegramUser, $this);
+        $actionHandler = $this->actionHandlerFactory->create($this->telegramUser, $this);
 
         if (!$actionHandler instanceof HasTextMessage) {
             throw new TelegramBotException(
@@ -94,13 +101,13 @@ class TelegramBot
             );
         }
 
-        $this->sendResponse($actionHandler->handleMessage($update->message->text));
+        return $actionHandler->handleMessage($update->message->text);
     }
 
     /**
      * @throws \Throwable
      */
-    private function handleCallbackQuery(Update $update): void
+    private function handleCallbackQuery(Update $update): ?Response
     {
         try {
             $callbackQuery = json_decode($update->callbackQuery->data, true);
@@ -111,17 +118,37 @@ class TelegramBot
                 'action' => $action
             ]);
 
-            $actionHandler = ActionHandlerFactory::make($this->telegramUser, $this);
+            $actionHandler = $this->actionHandlerFactory->create($this->telegramUser, $this);
+
+            if (!$actionHandler->authorize()) {
+                $this->responseSender->answerCallbackQuery([
+                    'callback_query_id' => $update->callbackQuery->id,
+                    'show_alert' => true,
+                    'text' => "Access denied."
+                ]);
+
+                return null;
+            }
 
             if (!$actionHandler instanceof HasCallbackQuery) {
                 throw new TelegramBotException(
-                    sprintf('Class %d must implement HasCallbackQuery contract', get_class($actionHandler))
+                    sprintf('Class %s must implement HasCallbackQuery contract', get_class($actionHandler))
                 );
             }
 
-            $this->sendResponse($actionHandler->handleCallbackQuery($callbackQuery ?? []));
+            $response = $actionHandler->handleCallbackQuery($action, $callbackQuery ?? []);
+
+            if ($this->telegramUser->message_id !== $update->callbackQuery->message->messageId) {
+                if ($this->telegramUser->message_id) {
+                    $this->responseSender->deleteMessage($this->telegramUser, $this->telegramUser->message_id);
+                }
+
+                $this->telegramUser->message_id = null;
+            }
+
+            return $response;
         } catch (\Throwable $e) {
-            \Telegram::answerCallbackQuery([
+            $this->responseSender->answerCallbackQuery([
                 'callback_query_id' => $update->callbackQuery->id,
                 'show_alert' => true,
                 'text' => 'Something went wrong'
@@ -143,7 +170,7 @@ class TelegramBot
                     $e->getTraceAsString()
                 );
 
-                Telegram::sendMessage([
+                $this->responseSender->sendRaw([
                     'chat_id' => $this->telegramUser->id,
                     'text' => $exceptionMessage,
                     'parse_mode' => 'HTML',

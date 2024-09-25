@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Alexxosipov\Telegram\Traits;
+namespace Alexxosipov\TelegramBot\Traits;
 
-use Alexxosipov\Telegram\Response\Response;
+use Alexxosipov\TelegramBot\Response\Response;
 use BackedEnum;
 
 trait InteractsWithTelegramUser
@@ -16,7 +16,7 @@ trait InteractsWithTelegramUser
         ]);
     }
 
-    protected function sendNextActionPreview(BackedEnum $action, ?array $data = null): Response
+    protected function sendNextActionPreview(BackedEnum $action, ?array $data = []): Response
     {
         $this->updateUserAction($action);
 

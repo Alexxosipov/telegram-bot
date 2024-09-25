@@ -1,15 +1,18 @@
 {
-    "name": "alexxosipov/telegram",
+    "name": "alexxosipov/telegram-bot",
     "description": "Laravel package for easy telegram bot development",
     "type": "library",
     "require": {
         "laravel/framework": "^11",
-        "irazasyed/telegram-bot-sdk": "^3.14"
+        "irazasyed/telegram-bot-sdk": "^3.14",
+        "symfony/psr-http-message-bridge": "^7.1",
+        "nyholm/psr7": "^1.8"
     },
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Alexxosipov\\Telegram\\": "src/"
+            "Alexxosipov\\TelegramBot\\": "src/",
+            "Alexxosipov\\TelegramBot\\Example\\": "example/"
         }
     },
     "authors": [
@@ -27,7 +30,7 @@
             "Workbench\\App\\": "workbench/app/",
             "Workbench\\Database\\Factories\\": "workbench/database/factories/",
             "Workbench\\Database\\Seeders\\": "workbench/database/seeders/",
-            "Tests": "tests"
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -46,5 +49,6 @@
         "lint": [
             "@php vendor/bin/phpstan analyse --verbose --ansi"
         ]
-    }
+    },
+    "version": "0.0.1"
 }

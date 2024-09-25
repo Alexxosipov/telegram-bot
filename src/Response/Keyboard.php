@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Alexxosipov\Telegram\Response;
+namespace Alexxosipov\TelegramBot\Response;
 
 use Telegram\Bot\Keyboard\Keyboard as TelegramKeyboard;
 
