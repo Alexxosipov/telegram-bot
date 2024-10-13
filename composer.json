@@ -12,7 +12,8 @@
     "autoload": {
         "psr-4": {
             "Alexxosipov\\TelegramBot\\": "src/",
-            "Alexxosipov\\TelegramBot\\Example\\": "example/"
+            "Alexxosipov\\TelegramBot\\Example\\": "example/",
+            "Alexxosipov\\TelegramBot\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -57,5 +58,5 @@
             ]
         }
     },
-    "version": "0.0.6"
+    "version": "0.0.7"
 }

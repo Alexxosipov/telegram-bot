@@ -5,6 +5,7 @@ namespace Alexxosipov\TelegramBot;
 use Alexxosipov\TelegramBot\Actions\ActionHandlerFactory;
 use Alexxosipov\TelegramBot\Actions\Contracts\HasCallbackQuery;
 use Alexxosipov\TelegramBot\Actions\Contracts\HasTextMessage;
+use Alexxosipov\TelegramBot\Actions\Contracts\KeepsPreviousMessage;
 use Alexxosipov\TelegramBot\Commands\CommandHandlerFactory;
 use Alexxosipov\TelegramBot\Exceptions\TelegramBotException;
 use Alexxosipov\TelegramBot\Models\TelegramUser;
@@ -68,7 +69,6 @@ class TelegramBot
 
             return $response;
         } catch (\Throwable $e) {
-            dd($e);
             report($e);
 
             return null;
@@ -87,9 +87,9 @@ class TelegramBot
             return null;
         }
 
-        $this->responseSender->deleteMessage($this->telegramUser, $update->message->messageId);
-
         if ($update->message->hasCommand()) {
+            $this->responseSender->deleteMessage($this->telegramUser, $update->message->messageId);
+
             return $this->handleCommand($update);
         }
 
@@ -97,8 +97,12 @@ class TelegramBot
 
         if (!$actionHandler instanceof HasTextMessage) {
             throw new TelegramBotException(
-                sprintf('Class %d must implement HasCallbackQuery contract', get_class($actionHandler))
+                sprintf('Class %d must implement HasTextMessage contract', get_class($actionHandler))
             );
+        }
+
+        if (!$actionHandler instanceof KeepsPreviousMessage) {
+            $this->responseSender->deleteMessage($this->telegramUser, $update->message->messageId);
         }
 
         return $actionHandler->handleMessage($update->message->text);
@@ -114,9 +118,7 @@ class TelegramBot
 
             $action = config('telegram-bot.action-enum')::from((int)$callbackQuery['action']);
 
-            $this->telegramUser->update([
-                'action' => $action
-            ]);
+            $this->telegramUser->action = $action;
 
             $actionHandler = $this->actionHandlerFactory->create($this->telegramUser, $this);
 
@@ -124,7 +126,7 @@ class TelegramBot
                 $this->responseSender->answerCallbackQuery([
                     'callback_query_id' => $update->callbackQuery->id,
                     'show_alert' => true,
-                    'text' => "Access denied."
+                    'text' => 'Access denied'
                 ]);
 
                 return null;
@@ -135,6 +137,8 @@ class TelegramBot
                     sprintf('Class %s must implement HasCallbackQuery contract', get_class($actionHandler))
                 );
             }
+
+            $this->telegramUser->save();
 
             $response = $actionHandler->handleCallbackQuery($action, $callbackQuery ?? []);
 
@@ -157,11 +161,12 @@ class TelegramBot
             if (!app()->isProduction()) {
                 $exceptionMessage = sprintf(
                     implode("\n", [
-                        '<b>File:</b> %d',
-                        '<b>Line:</b> %d',
-                        '<b>Message:</b> %d',
-                        '<b>Code:</b> %d',
-                        '<b>Trace:</b> %d',
+                        '<b>File:</b> %s',
+                        '<b>Line:</b> %s',
+                        '<b>Message:</b> %s',
+                        '<b>Code:</b> %s',
+                        '<b>Trace:</b>',
+                        '%s'
                     ]),
                     $e->getFile(),
                     $e->getLine(),
