@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Feature\Actions;
+namespace Alexxosipov\TelegramBot\Tests\Feature\Actions;
 
 use Alexxosipov\TelegramBot\Example\Enums\Action;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TelegramTestCase;
+use Alexxosipov\TelegramBot\Tests\TelegramTestCase;
 
 class DocsTest extends TelegramTestCase
 {

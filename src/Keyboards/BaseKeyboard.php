@@ -9,15 +9,23 @@ use Alexxosipov\TelegramBot\Response\Keyboard;
 
 abstract class BaseKeyboard
 {
-    public function __construct(
+    final public function __construct(
         protected TelegramUser $telegramUser
     ) {
     }
 
-    public static function make(TelegramUser $telegramUser): static
+    public static function make(TelegramUser $telegramUser): self
     {
-        return new static($telegramUser);
+        $class = new static($telegramUser);
+        $class->prepare();
+
+        return $class;
     }
 
     abstract public function build(): Keyboard;
+
+    protected function prepare(): void
+    {
+
+    }
 }

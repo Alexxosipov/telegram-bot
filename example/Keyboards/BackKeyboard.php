@@ -12,11 +12,9 @@ class BackKeyboard extends BaseKeyboard
 {
     private \BackedEnum $action;
 
-    public function __construct(TelegramUser $telegramUser)
+    protected function prepare(): void
     {
         $this->withAction(Action::Main);
-
-        parent::__construct($telegramUser);
     }
 
     public function build(): Keyboard

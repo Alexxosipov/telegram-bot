@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\Feature\Artisan;
+namespace Alexxosipov\TelegramBot\Tests\Feature\Artisan;
 
 use Alexxosipov\TelegramBot\Artisan\SetWebhook;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\TelegramTestCase;
+use Alexxosipov\TelegramBot\Tests\TelegramTestCase;
 
 class SetWebhookTest extends TelegramTestCase
 {

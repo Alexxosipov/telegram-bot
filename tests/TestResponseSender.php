@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Alexxosipov\TelegramBot\Tests;
 
 use Alexxosipov\TelegramBot\Models\TelegramUser;
 use Alexxosipov\TelegramBot\Response\Response;

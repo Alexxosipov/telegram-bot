@@ -1,14 +1,14 @@
 <?php
 
-namespace Tests;
+namespace Alexxosipov\TelegramBot\Tests;
 
 use Alexxosipov\TelegramBot\Models\TelegramUser;
 use Alexxosipov\TelegramBot\TelegramBotServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Orchestra\Testbench\TestCase;
-use Tests\Traits\FakeTelegramApi;
-use Tests\Traits\HasResponseAsserts;
+use Alexxosipov\TelegramBot\Tests\Traits\FakeTelegramApi;
+use Alexxosipov\TelegramBot\Tests\Traits\HasResponseAsserts;
 
 abstract class TelegramTestCase extends TestCase
 {

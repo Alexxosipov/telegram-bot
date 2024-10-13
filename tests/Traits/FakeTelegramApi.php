@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Traits;
+namespace Alexxosipov\TelegramBot\Tests\Traits;
 
 use Alexxosipov\TelegramBot\Response\Response;
 use Alexxosipov\TelegramBot\Response\Sender\ResponseSenderContract;
 use Alexxosipov\TelegramBot\TelegramBot;
 use Telegram\Bot\Objects\Update;
-use Tests\TelegramTestCase;
-use Tests\TestResponseSender;
+use Alexxosipov\TelegramBot\Tests\TelegramTestCase;
+use Alexxosipov\TelegramBot\Tests\TestResponseSender;
 
 trait FakeTelegramApi
 {
