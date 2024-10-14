@@ -197,4 +197,40 @@ class TelegramBot
             throw $e;
         }
     }
+
+    public function deleteMainMenuMessage(TelegramUser $telegramUser): void
+    {
+        $this->responseSender->deleteMessage($telegramUser, $telegramUser->message_id);
+
+        $telegramUser->message_id = null;
+        $telegramUser->save();
+    }
+
+    public function updateMainMessage(TelegramUser $telegramUser, BackedEnum $action): void
+    {
+        $telegramUser->action = $action;
+        $telegramUser->save();
+
+        $this->telegramUser = $telegramUser;
+
+        $actionHandler = $this->actionHandlerFactory->create($telegramUser, $this);
+        $response = $actionHandler->buildPreviewMessage();
+
+        $this->responseSender->send($this->telegramUser, $response);
+    }
+
+    public function sendNewMainMessage(TelegramUser $telegramUser, BackedEnum $action): void
+    {
+        $this->deleteMainMenuMessage($telegramUser);
+
+        $telegramUser->action = $action;
+        $telegramUser->save();
+
+        $this->telegramUser = $telegramUser;
+
+        $actionHandler = $this->actionHandlerFactory->create($telegramUser, $this);
+        $response = $actionHandler->buildPreviewMessage();
+
+        $this->responseSender->send($this->telegramUser, $response);
+    }
 }
