@@ -200,6 +200,10 @@ class TelegramBot
 
     public function deleteMainMenuMessage(TelegramUser $telegramUser): void
     {
+        if (!$telegramUser->message_id) {
+            return;
+        }
+
         $this->responseSender->deleteMessage($telegramUser, $telegramUser->message_id);
 
         $telegramUser->message_id = null;
