@@ -5,6 +5,7 @@ namespace Alexxosipov\TelegramBot;
 use Alexxosipov\TelegramBot\Actions\ActionHandlerFactory;
 use Alexxosipov\TelegramBot\Actions\Contracts\HasCallbackQuery;
 use Alexxosipov\TelegramBot\Actions\Contracts\HasTextMessage;
+use Alexxosipov\TelegramBot\Actions\Contracts\HasVoiceMessage;
 use Alexxosipov\TelegramBot\Actions\Contracts\KeepsPreviousMessage;
 use Alexxosipov\TelegramBot\Commands\CommandHandlerFactory;
 use Alexxosipov\TelegramBot\Exceptions\TelegramBotException;
@@ -103,6 +104,16 @@ class TelegramBot
 
         if (!$actionHandler instanceof KeepsPreviousMessage) {
             $this->responseSender->deleteMessage($this->telegramUser, $update->message->messageId);
+        }
+
+        if ($update->message->voice) {
+            if (!$actionHandler instanceof HasVoiceMessage) {
+                throw new TelegramBotException(
+                    sprintf('Class %d must implement HasVoiceMessage contract', get_class($actionHandler))
+                );
+            }
+
+            return $actionHandler->handleVoiceMessage($update->message->voice);
         }
 
         return $actionHandler->handleMessage($update->message->text);
