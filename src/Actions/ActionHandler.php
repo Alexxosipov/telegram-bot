@@ -11,6 +11,7 @@ use Alexxosipov\TelegramBot\Response\Response;
 use Alexxosipov\TelegramBot\Storage\StorageContract;
 use Alexxosipov\TelegramBot\TelegramBot;
 use Alexxosipov\TelegramBot\Traits\InteractsWithTelegramUser;
+use BackedEnum;
 
 abstract class ActionHandler implements HasCallbackQuery
 {
@@ -22,7 +23,7 @@ abstract class ActionHandler implements HasCallbackQuery
         protected readonly StorageContract  $storage,
     ) {}
 
-    public function handleCallbackQuery(Action $action, array $data = []): ?Response
+    public function handleCallbackQuery(BackedEnum $action, array $data = []): ?Response
     {
         return $this->sendNextActionPreview($action, $data);
     }

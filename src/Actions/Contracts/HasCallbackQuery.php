@@ -2,10 +2,10 @@
 
 namespace Alexxosipov\TelegramBot\Actions\Contracts;
 
-use Alexxosipov\TelegramBot\Example\Enums\Action;
+use BackedEnum;
 use Alexxosipov\TelegramBot\Response\Response;
 
 interface HasCallbackQuery
 {
-    public function handleCallbackQuery(Action $action, array $data): ?Response;
+    public function handleCallbackQuery(BackedEnum $action, array $data): ?Response;
 }
