@@ -11,7 +11,7 @@ trait HasResponseAsserts
         Response $response,
         ?string $text = null,
         ?string $url = null,
-        ?Action $action = null,
+        ?\BackedEnum $action = null,
         ?array $data = null
     ): void
     {
