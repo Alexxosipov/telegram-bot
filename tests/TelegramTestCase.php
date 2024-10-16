@@ -6,7 +6,7 @@ use Alexxosipov\TelegramBot\Models\TelegramUser;
 use Alexxosipov\TelegramBot\TelegramBotServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Orchestra\Testbench\TestCase;
+use Tests\TestCase;
 use Alexxosipov\TelegramBot\Tests\Traits\FakeTelegramApi;
 use Alexxosipov\TelegramBot\Tests\Traits\HasResponseAsserts;
 
