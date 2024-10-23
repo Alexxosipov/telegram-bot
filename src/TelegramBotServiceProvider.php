@@ -39,8 +39,6 @@ class TelegramBotServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        if(app()->runningUnitTests()) {
-            $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        }
+
     }
 }
