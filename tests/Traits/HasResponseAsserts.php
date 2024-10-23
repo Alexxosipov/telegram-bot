@@ -2,6 +2,7 @@
 
 namespace Alexxosipov\TelegramBot\Tests\Traits;
 
+use Alexxosipov\TelegramBot\Example\Enums\Action;
 use Alexxosipov\TelegramBot\Response\KeyboardButton;
 use Alexxosipov\TelegramBot\Response\Response;
 
