@@ -3,6 +3,7 @@
 namespace Alexxosipov\TelegramBot\Tests\Traits;
 
 use Alexxosipov\TelegramBot\Example\Enums\Action;
+use Alexxosipov\TelegramBot\Response\KeyboardButton;
 use Alexxosipov\TelegramBot\Response\Response;
 
 trait HasResponseAsserts
@@ -35,11 +36,9 @@ trait HasResponseAsserts
         }
 
         if (!is_null($data)) {
-            if ($action && !isset($data['action'])) {
-                $data['action'] = $action->value;
-            }
-
-            $buttons = $buttons->where('data', json_encode($data));
+            $buttons = $buttons->filter(function (KeyboardButton $button) use ($data) {
+                return empty(array_diff($data, $button->data));
+            });
         }
 
         $this->assertTrue($buttons->isNotEmpty());
