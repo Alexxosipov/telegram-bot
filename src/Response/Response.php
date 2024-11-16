@@ -12,7 +12,8 @@ class Response
     public function __construct(
         public string $text,
         public Keyboard|array|null $keyboard = null,
-        public bool $shouldSendNewMessage = false
+        public bool $shouldSendNewMessage = false,
+        public bool $shouldUpdateDbMessageId = true,
     )
     {
     }

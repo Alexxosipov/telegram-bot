@@ -16,10 +16,10 @@ class ResponseSender implements ResponseSenderContract
         $this->telegram = new Api(config('telegram-bot.bot-token'));
     }
 
-    public function send(TelegramUser $telegramUser, ?Response $response): void
+    public function send(TelegramUser $telegramUser, ?Response $response): ?int
     {
         if (is_null($response)) {
-            return;
+            return null;
         }
 
         $message = [
@@ -36,9 +36,12 @@ class ResponseSender implements ResponseSenderContract
 
         if ( ! $telegramUser->message_id || $response->shouldSendNewMessage) {
             $message = $this->telegram->sendMessage($message);
-            $telegramUser->update(['message_id' => $message->messageId]);
 
-            return;
+            if ($response->shouldUpdateDbMessageId) {
+                $telegramUser->update(['message_id' => $message->messageId]);
+            }
+
+            return $message->messageId;
         }
 
         $data = array_merge($message, [
@@ -57,6 +60,8 @@ class ResponseSender implements ResponseSenderContract
             $telegramUser->update(['message_id' => $message->messageId]);
             report($e);
         }
+
+        return $telegramUser->message_id;
     }
 
     public function deleteMessage(TelegramUser $telegramUser, int $messageId): void

@@ -7,7 +7,7 @@ use Alexxosipov\TelegramBot\Response\Response;
 
 interface ResponseSenderContract
 {
-    public function send(TelegramUser $telegramUser, ?Response $response): void;
+    public function send(TelegramUser $telegramUser, ?Response $response): ?int;
 
     public function deleteMessage(TelegramUser $telegramUser, int $messageId): void;
 
