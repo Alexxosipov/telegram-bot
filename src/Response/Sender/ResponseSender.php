@@ -53,7 +53,7 @@ class ResponseSender implements ResponseSenderContract
         } catch (TelegramResponseException $e) {
             // the only way to determine error when message is not modified
             if ($e->getMessage() === 'Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message') {
-                return;
+                return null;
             }
 
             $message = $this->telegram->sendMessage($message);
