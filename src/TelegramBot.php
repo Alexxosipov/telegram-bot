@@ -31,7 +31,7 @@ class TelegramBot
     public function __construct(
         public readonly ActionHandlerFactory   $actionHandlerFactory,
         private readonly CommandHandlerFactory $commandHandlerFactory,
-        private readonly ResponseSenderContract $responseSender
+        public readonly ResponseSenderContract $responseSender
     )
     {
     }

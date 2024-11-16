@@ -34,7 +34,7 @@ class ResponseSender implements ResponseSenderContract
             $message['reply_markup'] = $response->keyboard->toTelegramKeyboard();
         }
 
-        if ( ! $telegramUser->message_id) {
+        if ( ! $telegramUser->message_id || $response->shouldSendNewMessage) {
             $message = $this->telegram->sendMessage($message);
             $telegramUser->update(['message_id' => $message->messageId]);
 
