@@ -31,7 +31,7 @@ class TelegramBot
     public function __construct(
         public readonly ActionHandlerFactory   $actionHandlerFactory,
         private readonly CommandHandlerFactory $commandHandlerFactory,
-        private readonly ResponseSenderContract $responseSender
+        public readonly ResponseSenderContract $responseSender
     )
     {
     }
@@ -175,15 +175,12 @@ class TelegramBot
                         '<b>File:</b> %s',
                         '<b>Line:</b> %s',
                         '<b>Message:</b> %s',
-                        '<b>Code:</b> %s',
-                        '<b>Trace:</b>',
-                        '%s'
+                        '<b>Code:</b> %s'
                     ]),
                     $e->getFile(),
                     $e->getLine(),
                     $e->getMessage(),
                     $e->getCode(),
-                    $e->getTraceAsString()
                 );
 
                 $this->responseSender->sendRaw([
