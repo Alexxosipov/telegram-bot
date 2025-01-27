@@ -8,8 +8,9 @@ use Alexxosipov\TelegramBot\Response\Sender\ResponseSenderContract;
 
 class TestResponseSender implements ResponseSenderContract
 {
-    public function send(TelegramUser $telegramUser, ?Response $response): void
+    public function send(TelegramUser $telegramUser, ?Response $response): ?int
     {
+        return null;
     }
 
     public function deleteMessage(TelegramUser $telegramUser, int $messageId): void
